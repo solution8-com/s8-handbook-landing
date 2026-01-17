@@ -1,4 +1,4 @@
 # Table of contents
 
-* [Help Center](README.md)
+* [Solution8 ApS Internal Handbook](README.md)
   * [Page 1](readme/page-1.md)

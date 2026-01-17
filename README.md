@@ -6,7 +6,7 @@ layout:
     visible: true
     size: full
   title:
-    visible: false
+    visible: true
   description:
     visible: false
   tableOfContents:
@@ -22,7 +22,7 @@ metaLinks:
     - https://app.gitbook.com/s/rBHPLaxmpwZv1eMYtJSj/
 ---
 
-# Help Center
+# Solution8 ApS Internal Handbook
 
 <h2 align="center">Welcome to the Solution8 Handbook!</h2>
 
