@@ -5,6 +5,9 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from collections import deque
+from typing import Iterable, Optional
+
+from bs4 import BeautifulSoup
 
 
 BASE_URL = "https://www.thelmbook.com/wiki/"
@@ -35,16 +38,18 @@ def _canonicalize_link(raw_link: str, context_url: str):
     return abs_url, path
 
 
-def _extract_links(content: str):
+def _extract_links(content: str) -> Iterable[str]:
     """Extract markdown and HTML links from content."""
     links = set()
+
+    # HTML links
+    soup = BeautifulSoup(content, "html.parser")
+    for tag in soup.find_all("a", href=True):
+        links.add(tag["href"])
+
+    # Markdown links
     md_pattern = re.compile(r"\[[^\]]*\]\(([^)]+)\)", re.IGNORECASE)
-    href_pattern = re.compile(r'href="([^"]+)"', re.IGNORECASE)
-
     for match in md_pattern.finditer(content):
-        links.add(match.group(1))
-
-    for match in href_pattern.finditer(content):
         links.add(match.group(1))
 
     return links
@@ -56,7 +61,11 @@ def _fetch(url: str) -> str:
         return resp.read().decode("utf-8", errors="replace")
 
 
-def crawl(start_url: str = DEFAULT_START, output_dir: str = "wiki"):
+def crawl(
+    start_url: str = DEFAULT_START,
+    output_dir: str = "wiki",
+    max_pages: Optional[int] = None,
+):
     stack = deque([start_url])
     visited = set()
     os.makedirs(output_dir, exist_ok=True)
@@ -71,6 +80,9 @@ def crawl(start_url: str = DEFAULT_START, output_dir: str = "wiki"):
         if rel_path in visited:
             continue
         visited.add(rel_path)
+
+        if max_pages is not None and len(visited) > max_pages:
+            break
 
         try:
             content = _fetch(fetch_url)
