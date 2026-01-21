@@ -15,7 +15,9 @@ def _resolve_chromium_executable() -> str:
 
     cache_dir = Path.home() / ".cache" / "ms-playwright"
     candidates = sorted(
-        cache_dir.glob("chromium-*/chrome-linux/chrome"), reverse=True
+        list(cache_dir.glob("chromium-*/chrome-linux/chrome"))
+        + list(cache_dir.glob("chromium-*/chrome-linux64/chrome")),
+        reverse=True,
     )
     if not candidates:
         raise FileNotFoundError("Chromium executable not found; run playwright install")
