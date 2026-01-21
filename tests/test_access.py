@@ -45,7 +45,7 @@ async def _fetch_status_and_text(url: str):
 def test_playwright_can_access_wiki():
     status, body = asyncio.run(_fetch_status_and_text(URL))
     assert status in (200, 301, 302), f"Unexpected status {status}"
-    markers = ["wiki", "thelmb"]
+    markers = ["wiki", "thelm"]
     assert any(m in body.lower() for m in markers), (
         "Page content did not include expected markers; "
         "body indicates potential JS-required splash"

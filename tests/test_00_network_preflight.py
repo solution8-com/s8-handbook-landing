@@ -56,7 +56,7 @@ def _http_head_check():
 
     req = urllib.request.Request(HEAD_URL, method="HEAD")
     try:
-        with urllib.request.urlopen(req, timeout=10) as resp:  # nosec B310
+        with urllib.request.urlopen(req, timeout=10) as resp:
             return [f"HTTP {resp.status}", *(f"{k}: {v}" for k, v in resp.headers.items())]
     except urllib.error.URLError as exc:  # pragma: no cover - network dependent
         raise AssertionError(f"HTTPS request failed: {exc}") from exc
@@ -75,4 +75,3 @@ def test_00_network_preflight():
             f"HTTP:\n{http_info or '<no output>'}",
         ]
         pytest.fail(f"{exc}\n\nPreflight details:\n" + "\n\n".join(details))
-
