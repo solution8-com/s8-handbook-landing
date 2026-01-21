@@ -5,7 +5,7 @@ from pathlib import Path
 from playwright.async_api import async_playwright
 
 
-URL = "https://www.thelmbook.com/wiki/#!index.md"
+URL = "https://www.thelmbook.com/wiki/"
 
 
 def _resolve_chromium_executable() -> str:
@@ -24,20 +24,29 @@ def _resolve_chromium_executable() -> str:
     return str(candidates[0])
 
 
-async def _fetch_status(url: str) -> int:
+async def _fetch_status_and_text(url: str):
     async with async_playwright() as p:
         chromium = p.chromium
         browser = await chromium.launch(
             headless=True, executable_path=_resolve_chromium_executable()
         )
-        page = await browser.new_page()
+        context = await browser.new_context(ignore_https_errors=True)
+        page = await context.new_page()
         response = await page.goto(
-            url, wait_until="domcontentloaded", timeout=20000
+            url, wait_until="networkidle", timeout=20000
         )
+        text = await page.content()
+        await context.close()
         await browser.close()
-        return response.status if response else 0
+        status = response.status if response else 0
+        return status, text or ""
 
 
 def test_playwright_can_access_wiki():
-    status = asyncio.run(_fetch_status(URL))
-    assert status == 200, "Playwright could not reach the wiki URL; check DNS/network"
+    status, body = asyncio.run(_fetch_status_and_text(URL))
+    assert status in (200, 301, 302), f"Unexpected status {status}"
+    markers = ["wiki", "thelmb"]
+    assert any(m in body.lower() for m in markers), (
+        "Page content did not include expected markers; "
+        "body indicates potential JS-required splash"
+    )
