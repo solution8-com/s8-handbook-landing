@@ -2,6 +2,8 @@
 
 Template for AI-Raadgivning client scoping. Use at kickoff and update as new needs are identified.
 
+**See also:** [Dev Lifecycle](lifecycle.md) · [IT Policy](../practical-info/policies/it-policy.md) · [Data Processing](../practical-info/policies/data-processing.md) · [Risk Guideline](../practical-info/policies/risk-guideline.md)
+
 ---
 
 ## 1. People & Access
